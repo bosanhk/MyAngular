@@ -10,6 +10,19 @@
   <script src="https://code.jquery.com/jquery-3.4.1.min.js"
     integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
   <script>
+    var TIMEOUT = 2000; // ms
+    const flag_TUP = 0x01;
+    const flag_AT = 0x40;
+
+    const cose_kty = 1;
+    const cose_kty_ec2 = 2;
+    const cose_alg = 3;
+    const cose_alg_ECDSA_w_SHA256 = -7;
+    const cose_crv = -1;
+    const cose_crv_P256 = 1;
+    const cose_crv_x = -2;
+    const cose_crv_y = -3;
+
     function string2buffer(str) {
       return (new Uint8Array(str.length)).map(function (x, i) {
         return str.charCodeAt(i)
