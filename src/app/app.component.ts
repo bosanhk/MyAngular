@@ -1,7 +1,5 @@
 import { Component, enableProdMode } from '@angular/core';
 
-enableProdMode();
-
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -9,4 +7,6 @@ enableProdMode();
 })
 export class AppComponent {
   title = 'MyAngular';
+
+  
 }
