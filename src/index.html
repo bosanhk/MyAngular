@@ -1,17 +1,100 @@
 <!doctype html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8">
   <title>MyAngular</title>
   <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" type="image/x-icon" href="favicon.ico">
-  <script
-  src="https://code.jquery.com/jquery-3.4.1.min.js"
-  integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
-  crossorigin="anonymous"></script>
+  <script src="https://code.jquery.com/jquery-3.4.1.min.js"
+    integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+  <script>
+    function doWebAuthnCreate(challengeBytes) {
+      let createRequest = {
+        challenge: challengeBytes,
+        // Relying Party:
+        rp: {
+          name: "Acme"
+        },
+
+        // User:
+        user: {
+          id: string2buffer("1098237235409872"),
+          name: "john.p.smith@example.combosa",
+          displayName: "John P. Smith",
+          icon: "https://pics.acme.com/00/p/aBjjjpqPb.png"
+        },
+
+        pubKeyCredParams: [{
+          alg: cose_alg_ECDSA_w_SHA256,
+          type: "public-key",
+        }],
+
+        authenticatorSelection: {
+          authenticatorAttachment: "cross-platform",
+          requireResidentKey: false,
+          userVerification: "preferred"
+        },
+
+        attestation: undefined,
+        timeout: 60000, // 1 minute
+        excludeCredentials: [], // No excludeList
+        extensions: {
+          "exts": true
+        }
+      };
+
+      let rpid = document.domain;
+
+      navigator.credentials.create({
+          publicKey: createRequest
+        })
+        .then(function (aNewCredentialInfo) {
+          console.log("Credentials.Create response: ", aNewCredentialInfo);
+
+        })
+        .then(function (aAttestation) {
+          // Make sure the RP ID hash matches what we calculate.
+          return crypto.subtle.digest("SHA-256", string2buffer(rpid))
+            .then(function (calculatedHash) {
+              return Promise.resolve(aAttestation);
+            });
+        })
+        .then(async function (aAttestation) {
+          let flags = new Uint8Array(aAttestation.flags);
+          console.log(flags);
+        }).then(function () {
+          console.log("createOut\n" + JSON.stringify(createRequest, null, 2) + "\n\n");
+        }).catch(function (aErr) {
+          if ("name" in aErr && (aErr.name == "AbortError" || aErr.name == "NS_ERROR_ABORT")) {
+            console.log("createOut", "Aborted; retry?\n");
+          } else {
+            console.log("createOut", aErr.toString() + "\n\n");
+          }
+        }).then(function () {
+          console.log("createOut \n\n");
+        });
+    }
+
+
+
+    $(() => {
+      console.log("Initialize complete!");
+      $("#mobileNativeLoginBtn").click(() => {
+        let challengeBytes = new Uint8Array(16);
+        window.crypto.getRandomValues(challengeBytes);
+
+        doWebAuthnCreate(challengeBytes);
+
+      })
+    })
+
+  </script>
 </head>
+
 <body>
   <app-root></app-root>
 </body>
+
 </html>
