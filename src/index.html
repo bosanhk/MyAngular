@@ -10,6 +10,12 @@
   <script src="https://code.jquery.com/jquery-3.4.1.min.js"
     integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
   <script>
+    function string2buffer(str) {
+      return (new Uint8Array(str.length)).map(function (x, i) {
+        return str.charCodeAt(i)
+      });
+    }
+
     function doWebAuthnCreate(challengeBytes) {
       let createRequest = {
         challenge: challengeBytes,
