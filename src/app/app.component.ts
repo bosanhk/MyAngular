@@ -1,4 +1,6 @@
-import { Component, enableProdMode } from '@angular/core';
+import { Component, enableProdMode, Compiler } from '@angular/core';
+
+enableProdMode();
 
 @Component({
   selector: 'app-root',
@@ -8,5 +10,7 @@ import { Component, enableProdMode } from '@angular/core';
 export class AppComponent {
   title = 'MyAngular';
 
-  
+  constructor(private compiler: Compiler) {
+    compiler.clearCache();
+  }
 }
